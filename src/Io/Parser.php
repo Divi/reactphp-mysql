@@ -298,7 +298,11 @@ class Parser
                 } elseif ($this->rsState === self::RS_STATE_ROW) {
                     $row = [];
                     foreach ($this->resultFields as $field) {
-                        $row[$field['name']] = $packet->readStringLen();
+                        if (Connection::getAttribute('prefix.table_name')) {
+                            $row[$field['table'] . '.' . $field['name']] = $packet->readStringLen();
+                        } else {
+                            $row[$field['name']] = $packet->readStringLen();
+                        }
                     }
 
                     if ($this->debug) {

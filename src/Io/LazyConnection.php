@@ -235,4 +235,16 @@ class LazyConnection extends EventEmitter implements ConnectionInterface
         $this->emit('close');
         $this->removeAllListeners();
     }
+
+    public function setAttribute(string $name, mixed $value): void
+    {
+        if ($this->connecting instanceof ConnectionInterface) {
+            $this->connecting->setAttribute($name, $value);
+        }
+    }
+
+    public static function getAttribute(string $name): mixed
+    {
+        return Connection::getAttribute($name);
+    }
 }

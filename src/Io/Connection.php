@@ -38,6 +38,7 @@ class Connection extends EventEmitter implements ConnectionInterface
      * @var SocketConnectionInterface
      */
     private $stream;
+    private static array $attributes = [];
 
     /**
      * Connection constructor.
@@ -76,8 +77,10 @@ class Connection extends EventEmitter implements ConnectionInterface
 
         // store all result set rows until result set end
         $rows = [];
-        $command->on('result', function ($row) use (&$rows) {
+        $command->on('result', function ($row) use (&$rows, $deferred) {
             $rows[] = $row;
+
+            $deferred->progress($row);
         });
         $command->on('end', function () use ($command, $deferred, &$rows) {
             $result = new QueryResult();
@@ -224,5 +227,15 @@ class Connection extends EventEmitter implements ConnectionInterface
         }
 
         return $this->executor->enqueue($command);
+    }
+
+    public function setAttribute(string $name, mixed $value): void
+    {
+        self::$attributes[$name] = $value;
+    }
+
+    public static function getAttribute(string $name, mixed $default = null): mixed
+    {
+        return self::$attributes[$name] ?? $default;
     }
 }

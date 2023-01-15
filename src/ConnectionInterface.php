@@ -219,4 +219,8 @@ interface ConnectionInterface extends EventEmitterInterface
      * @return void
      */
     public function close();
+
+    public function setAttribute(string $name, mixed $value): void;
+
+    public static function getAttribute(string $name): mixed;
 }
